@@ -1,59 +1,69 @@
 //Imports
+import { libraryFunctions, projectsList, addProjectToLibrary, saveSelected,
+     save, local_storage_key, deleteButton, addTasktoProject, taskFunctions, local_storage_selected_key} from './functions';
 import './style.css';
 
-//project list array
-let projectList =[];
-
 // Selectors
-const projectListDiv = document.querySelector(".projectList-group");
-const newProject = document.getElementById('formInput');
+export const newProject = document.getElementById('form-input');
+export const newTaskTitle = document.getElementById('task-form-title-input')
+export const newTaskDescription = document.getElementById('task-form-description-input')
+export const newTaskDueDate = document.getElementById('task-form-dueDate-input')
+export const newTaskPriority = document.getElementById('task-form-priority-input')
+export const newTaskNotes = document.getElementById('task-form-notes-input')
+export const newTaskCheckList = document.getElementById('task-form-checkList-input')
 
 //Class constructors
-class Project {
-    constructor(title) {
-        this.title = title;
-    }    
-}
 
-//Preset input
-const defaultProject = new Project("default")
-projectList.push(defaultProject);
+
+// //Preset input
+// const defaultProject = new Project("default")
+// projectList.push(defaultProject);
 
 //Creates elements for each project in the ProjectList array
-createProjectLibrary();
-function createProjectLibrary (){
-    for(let i = 0; i < projectList.length; i++) {
-        let project = document.createElement("li");
-        projectListDiv.appendChild(project);
-        project.classList.add("project-item");
-        project.setAttribute("data-project", i)
-        project.textContent = projectList[i].title;
-    }
-}
-console.log(projectList);
+libraryFunctions.renderProjectLibrary();
+taskFunctions.renderTasks();
 
-//Adds new project values to project elements
-function addProjectToLibrary(){
-    let projectLiElem = document.querySelectorAll("li")
-    projectLiElem.forEach(eachProject=>{
-        projectListDiv.removeChild(eachProject);
-    })
+export const projectItemList = document.querySelectorAll (".project-item")
+// selectProject();
+// function selectProject(){
+//     projectItemList.forEach(project=>{
+//         project.addEventListener('click', ()=>{ 
+//             // save clicked project ID
+//                 if (project.style.fontWeight == "bold"){
+//                     project.style.fontWeight="normal";
+//                     console.log("this is deselected Project", project);
+//                 }else{
+//                     //use if statement add selected project class to the div and
+//                     // if it is not the selected div then remove the selected class
+//                     project.style.fontWeight="bold";
+//                     selectedProjectID = projectsList[project.dataset.project].ID;
+//                     console.log("this is selected Project", selectedProjectID);
+//                     saveSelected();
+//                     console.log(local_storage_selected_key);
+//                 }
+//             })
+//         })
+// }
 
-    let newProjectItem = new Project(newProject.value)
-    projectList.push(newProjectItem)
-    console.log(projectList);
-
-    createProjectLibrary(); 
-}
-
-//Displays new project in list
-const projectForm = document.getElementById("project-form");
+export const projectForm = document.getElementById("project-form");
 projectForm.addEventListener('submit',e =>{
     e.preventDefault();
     addProjectToLibrary();
     newProject.value = "";
+    save();
+    libraryFunctions.renderProjectLibrary();
+
 });
 
+export const taskForm = document.getElementById("task-form")
+taskForm.addEventListener("submit",e =>{
+    e.preventDefault();
+    addTasktoProject();
+    taskFunctions.renderTasks();
+    newTaskDescription.value="";
+    console.log(projectsList);
+    console.log(localStorage);
+})
 
 
 
