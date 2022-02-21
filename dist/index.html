@@ -8,25 +8,30 @@
 </head>
 <body>
     <script src="main.js"defer></script>
-    <div id="project-library"></div>
+    <div id="project-library">
         <div class="library-container">
             <ul id="projects" class="project-list-group" ></ul>
+            <form id="project-form">
+                <input type="text" id="form-input">
+                <button id="add-project-button">+</button>
+            </form>
+            <br>
+            <div class="delete-container">
+                <button class="delete-button">Delete Project</button>
+            </div>
         </div>
-        <form id="project-form">
-            <input type="text" id="form-input">
-            <button id="add-project-button">Add Project</button>
-        </form>
-        <br>
-        <div class="delete-container">
-            <button class="delete-button">Delete Project</button>
-        </div>
+
+
+    </div>
+
         <div class="task-container">
             <ul id="tasks" class="task-list-group" ></ul>
+            <form id="task-form">
+                <input type="text" id="task-form-description-input">
+                <button id="add-task-button">+</button>
+            </form>
         </div>
-        <form id="task-form">
-            <input type="text" id="task-form-description-input">
-            <button id="add-task-button">Add Task</button>
-        </form>
+
     </div>
 </body>
 </html>
