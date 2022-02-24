@@ -29,22 +29,74 @@ export const projectsListDiv = document.querySelector(".project-list-group");
 export const deleteProjectButton = document.querySelector(".delete-button");
 export const tasksListDiv = document.querySelector(".task-list-group");
 
+
+
+
 export const local_storage_key = 'projectslist';
 export const local_storage_selected_key = 'selectedproject';
+export const local_storage_selected_task_key = 'selectedtask';
 export let selectedProject = "";
+export let selectedTaskID = "";
+export let selectedTask = "";
+
+export function selectTaskId () {
+    const taskItemList = document.querySelectorAll(".task-item")
+    taskItemList.forEach( eachTask => {
+        eachTask.addEventListener('click', (e) => {
+
+            if(eachTask.dataset.taskId===selectedTaskID){
+
+                console.log('its working!')
+                eachTask.classList.remove("selectedTask")
+                
+                localStorage.removeItem(local_storage_selected_task_key);
+                
+                removeAllChildNodes(tasksListDiv);
+                taskFunctions.renderTasks();
+                save();
+
+            }else{
+                localStorage.removeItem(local_storage_selected_task_key);
+
+                selectedTaskID = eachTask.dataset.taskId;
+    
+                localStorage.setItem(local_storage_selected_task_key, selectedTaskID)
+                save();
+                removeAllChildNodes(tasksListDiv);
+                taskFunctions.renderTasks();
+                
+                selectedTask = selectedProject.tasks.find(task=>{
+                    console.log(selectedTask);
+                    return task.ID === selectedTaskID
+                })
+
+            }
+        });
+    });
+
+}
 
 export function selectProjectId () {
 
     projectsListDiv.addEventListener('click', (e) => {
+
+
         if (e.target.tagName.toLowerCase()==="li") {
             // set selected project id by click on projects list item
             selectedProjectID = e.target.dataset.projectId;
+            selectedProject = projectsList.find(project=>{
+                return project.ID === selectedProjectID
+            })
 
             localStorage.setItem(local_storage_selected_key, selectedProjectID);
-            save();
+           
 
             libraryFunctions.renderProjectLibrary();
+            removeAllChildNodes(tasksListDiv);
             taskFunctions.renderTasks();
+
+
+            save();
              // to change the bold project
 
 
@@ -55,29 +107,17 @@ export function selectProjectId () {
 
 };
             
-    
-            // localStorage.setItem(local_storage_selected_key, selectedProjectID);
-            //     console.log(localStorage); //
-            // save();
-    
-            // taskFunctions.renderTasks();
-    
-    
-            // removeAllChildNodes(tasksListDiv);
-            // taskFunctions.renderTasks();
-            //make sure to render selected rendertasks
-    
-//         };;
-    
-//     })
-// }
-
-
 
 export let selectedProjectID = localStorage.getItem(local_storage_selected_key);
 
-
 export let projectsList= [];
+
+// if (localStorage.getItem(local_storage_selected_task)){
+//     tasksList = JSON.parse(localStorage.getItem(local_storage_selected_task))
+// }else {
+    
+// }
+
 //project list array
 if (localStorage.getItem(local_storage_key)) {
     projectsList = JSON.parse(localStorage.getItem(local_storage_key));
@@ -85,11 +125,12 @@ if (localStorage.getItem(local_storage_key)) {
     projectsList = [defaultProject];
 };
 
+selectedProject = projectsList.find(project=>{
+    return project.ID === selectedProjectID
+})
 
-// selectedProject = projectsList.find(project=>{
-//     return project.ID === selectedProjectID
-// })
-// // console.log(selectedProject);
+console.log(selectedProject);
+// console.log(selectedTask);
 
 //Creates elements for each project in the ProjectsList array
 export const libraryFunctions = (()=>{
@@ -130,49 +171,127 @@ const taskContainer= document.getElementsByClassName('task-container');
 
 export const taskFunctions = (() => {
 
+    // const deleteTask = function() {
+    //     if (!selectProjectId || selectedTaskId === '' || selectedTaskId === null) {
+    //         console.log('there is no selected task');
+    //     } else {
+    //         projectsList.splice(indexOfSelectedTask, 1);
+    //         save();
+    //     }
+    // }
+
     const renderTasks = function() {
-        removeAllChildNodes(tasksListDiv);
-        if( !selectedProjectID || selectedProjectID === null || selectedProjectID ==="") {
-            console.log("selectedProject does not exist")
+        if (!selectedProject){
+            if( selectedProjectID === null || selectedProjectID ==="") {
+            console.log("selectedProjectID does not exist")
             taskContainer.style.display = "none";
+            
+             }else{    
+             }
 
-            }else {
-                for(let i = 0; i < [selectedProject.tasks].length; i++) {
-                    selectedProject.tasks.forEach(eachTask => {
-                        let task = document.createElement("div");
-                        tasksListDiv.appendChild(task);
-                        task.classList.add("task-item");
-                        task.setAttribute("data-task", i);
-        
-                        let taskDescription = document.createElement("li");
-                        task.appendChild(taskDescription);
-                        taskDescription.classList.add("task-item-description");
-                        taskDescription.textContent = eachTask.description;
+        }else {
+        for(let i = 0; i < [selectedProject.tasks].length; i++) {
             
-                        let taskDueDate = document.createElement("li");
-                        task.appendChild(taskDueDate);
-                        taskDueDate.classList.add("task-item-dueDate");
-                        taskDueDate.textContent = eachTask.dueDate;
+            selectedProject.tasks.forEach( (eachTask) => {
+            let task = document.createElement("li");
+            tasksListDiv.appendChild(task);
+            task.classList.add("task-item");
+            task.dataset.taskId= eachTask.ID;
+
+            let taskDescription = document.createElement("li");
+            task.appendChild(taskDescription);
+            taskDescription.classList.add("task-description");
+            taskDescription.textContent = eachTask.description;
+
+            let taskDueDate = document.createElement("li");
+            task.appendChild(taskDueDate);
+            taskDueDate.classList.add("task-dueDate");
+            taskDueDate.textContent = eachTask.dueDate;
+
+            let taskPriority = document.createElement("li");
+            task.appendChild(taskPriority);
+            taskPriority.classList.add("task-priority");
+            taskPriority.textContent = eachTask.priority;
+
+            let taskComplete = document.createElement("button");
+            task.appendChild(taskComplete);
+            taskComplete.classList.add("task-complete");
+            taskComplete.textContent = eachTask.complete;
+
+            let taskDeleteButton = document.createElement("button");
+            task.appendChild(taskDeleteButton);
+            taskDeleteButton.classList.add("task-delete-button");
+            taskDeleteButton.textContent = "Delete Task";
+
+            let editButton = document.createElement("button");
+            task.appendChild(editButton);
+            editButton.classList.add("edit-task-button")
+            editButton.textContent="Edit";
+
             
-                        let taskPriority = document.createElement("li");
-                        task.appendChild(taskPriority);
-                        taskPriority.classList.add("task-item-priority");
-                        taskPriority.textContent = eachTask.priority;
-            
-                        let taskComplete = document.createElement("button");
-                        task.appendChild(taskComplete);
-                        taskComplete.classList.add("task-item-complete");
-                        taskComplete.textContent = eachTask.complete;
-        
-                        let taskDeleteButton = document.createElement("button");
-                        task.appendChild(taskDeleteButton);
-                        taskDeleteButton.classList.add("task-delete-button");
-                        taskDeleteButton.textContent = "Delete Task"
-                    });
+
+            // add event listener to clicking of this task item div
+            selectTaskId();
+
+            editButton.addEventListener('click',(e)=>{
+                if(task.dataset.taskId ==selectedTaskID){
+                    console.log('its the same')
+  
+                    taskDescription.textContent="idkwhattodoheere";
+                }
+            })
+
+
+            let completeButtonList = document.querySelectorAll(".task-complete")
+            completeButtonList.forEach(eachComplete=>{
+                eachComplete.addEventListener('click', (e)=>{
+                    if(task.dataset.taskId ==selectedTaskID ){
+                        if(eachTask.complete =="Complete"){
+                            eachTask.complete="Incomplete";
+                        }else{
+                            eachTask.complete = "Complete";
+                            save();
+                        } 
+                    }else{
+                    }
+                })
+            })
+
+            let allTaskDeleteButtons= document.querySelectorAll('.task-delete-button')
+            allTaskDeleteButtons.forEach(eachTaskDelete =>{
+                if (eachTask.ID===selectedTaskID){
+
+                }else{
+                    taskDeleteButton.style.display = "none";
+                    editButton.style.display ="none";
+                }
+                eachTaskDelete.addEventListener('click', (e)=>{
+                    if (eachTask.ID===selectedTaskID){
+                        console.log('each task being recognized')
+                        deleteStorageTask();
+                        localStorage.removeItem(local_storage_selected_task_key, selectedTaskID);
+                    }
+                })
+            })
+
+            if (task.dataset.taskId == selectedTaskID) {
+                task.classList.add("selectedTask")
+                // console.log(projectsList)
+            } else {
+                task.classList.remove("selectedTask")
+                
             }
-    }
+            if (!selectedTaskID) {
+                task.classList.remove("selectedTask")
+            } else {
+                    
 
-    }
+            }
+
+                // removeAllChildNodes(tasksListDiv);
+        })
+    }};
+            }
     return {
         renderTasks
     }
@@ -181,6 +300,7 @@ export const taskFunctions = (() => {
 export function deleteStorageProject () {
     let storageSelectedProject = projectsList.find( project => {
         return project.ID === selectedProjectID;
+        
     });
 
     // would separate into two functions but ok
@@ -195,6 +315,29 @@ export function deleteStorageProject () {
 
         projectsList.splice(thisindex , 1);
         save();
+        removeAllChildNodes(tasksListDiv);
+
+        }
+}
+export function deleteStorageTask () {
+    let storageSelectedTask = selectedProject.tasks.find( taskItem => {
+        return taskItem.ID === selectedTaskID;
+        
+    });
+
+    // would separate into two functions but ok
+    
+    if (storageSelectedTask.ID === localStorage.getItem(local_storage_selected_task_key)) {
+        // remove from local storage    
+        localStorage.removeItem(local_storage_selected_task_key);
+        let thisTaskIndex = selectedProject.tasks.indexOf(storageSelectedTask);
+
+        console.log(thisTaskIndex);
+        console.log(storageSelectedTask);
+
+        selectedProject.tasks.splice(thisTaskIndex , 1);
+        save();
+        // removeAllChildNodes(tasksListDiv);
 
         }
 }
@@ -218,6 +361,7 @@ export const addProjectToLibrary = function(){
 export function save() {
     localStorage.setItem(local_storage_key, JSON.stringify(projectsList));
     localStorage.setItem(local_storage_selected_key, selectedProjectID);
+    localStorage.setItem(local_storage_selected_task_key, selectedTaskID);
 }
 
 export function addTasktoProject() {
@@ -239,7 +383,6 @@ function create_UUID(){
     });
     return uuid;
 }
-
 
 
 

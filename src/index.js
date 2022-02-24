@@ -1,21 +1,27 @@
 //Imports
 import { 
     selectProjectId,
+    selectedTaskID,
+    selectedTask,
+    selectedTaskDiv,
     selectedProject,
     libraryFunctions,
     projectsList,
+    selectTaskId,
     addProjectToLibrary,
     saveSelected,
     projectsListDiv,
     removeAllChildNodes,
     deleteStorageProject,
+    deleteStorageTask,
     save,
     selectedProjectID,
     local_storage_key,
     deleteProjectButton,
     addTasktoProject,
     taskFunctions,
-    local_storage_selected_key
+    local_storage_selected_key,
+    local_storage_selected_task_key
 } from './functions';
 
 import './style.css';
@@ -37,9 +43,16 @@ export const newTaskComplete = document.getElementById('task-form-complete-input
 // //Preset input
 //Creates elements for each project in the ProjectList array
 libraryFunctions.renderProjectLibrary();
-
+if (!selectedProject){
+    console.log("did not select a project")
+    
+}else {
+ taskFunctions.renderTasks();
+}
+// taskFunctions.renderTasks();
 
 export const projectItemList = document.querySelectorAll (".project-item")
+
 
 export const projectForm = document.getElementById("project-form");
 projectForm.addEventListener('submit',e =>{
@@ -53,17 +66,19 @@ projectForm.addEventListener('submit',e =>{
 
 
 selectProjectId();
+selectTaskId();
 
 
 export const taskForm = document.getElementById("task-form")
 taskForm.addEventListener("submit",e => {
+    
     e.preventDefault();
     selectedProject = projectsList.find(project => {
         return project.ID === selectedProjectID
         
     })
     // console.log(selectedProject);
-    addTasktoProject();
+    addTasktoProject();            
     taskFunctions.renderTasks();
 
     newTaskDescription.value="";
@@ -90,27 +105,9 @@ deleteProjectButton.addEventListener ("click", e => {
         selectedDiv.parentElement.removeChild(selectedDiv);
         localStorage.removeItem(local_storage_selected_key, selectedProjectID);
     };
-   
-
-    // console.log(localStorage);
-    // for (let i = 0; i < localStorage.length; i++){
-    //     localStorage.getItem('projectslist');
-    //     libraryFunctions.renderProjectLibrary();
-    //     }
 });
 
 
-// console.log(selectedProjectID)  ;
 
-
-// });
-
-
-
-
-
-
-
-
-
+// selectTaskId ()
 
