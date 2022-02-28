@@ -46,7 +46,6 @@ export function selectTaskId () {
 
             if(eachTask.dataset.taskId===selectedTaskID){
 
-                console.log('its working!')
                 eachTask.classList.remove("selectedTask")
                 
                 localStorage.removeItem(local_storage_selected_task_key);
@@ -167,7 +166,7 @@ export const libraryFunctions = (()=>{
 
 export const taskItemList = document.querySelectorAll(".task-item")
 
-const taskContainer= document.getElementsByClassName('task-container');
+const taskContainer= document.querySelector('.task-container');
 
 export const taskFunctions = (() => {
 
@@ -235,9 +234,33 @@ export const taskFunctions = (() => {
 
             editButton.addEventListener('click',(e)=>{
                 if(task.dataset.taskId ==selectedTaskID){
+
+                    let editTask = document.createElement("form");
+                    taskContainer.appendChild(editTask);
+                    let editDescription = document.createElement("input")
+                    editDescription.type = "text";
+                    editTask.appendChild(editDescription);
+                    let editDueDate = document.createElement("input")
+                    editDueDate.type = "date";
+                    editTask.appendChild(editDueDate);
+                    let editPriority = document.createElement("input")
+                    editPriority.type = "text";
+                    editTask.appendChild(editPriority);
+
+                    let saveEdit = document.crateElement("button")
+                    taskContainer.textContent = "Save";
+                    editTask.appendChild(saveEdit);
+
+
+                    
                     console.log('its the same')
-  
-                    taskDescription.textContent="idkwhattodoheere";
+                    console.log(eachTask.description)
+
+                    saveEdit.addEventListener("click",e => {
+                        eachTask.description = editDescription.value;
+                        eachTask.dueDate = editDueDate.value;
+                        eachTask.priority = editPriority.value;
+                    })
                 }
             })
 
