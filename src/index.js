@@ -6,6 +6,7 @@ import {
     selectedTask,
     taskDueDate,
     selectedTaskDiv,
+    tasksListDiv,
     selectedProject,
     libraryFunctions,
     projectsList,
@@ -53,8 +54,6 @@ if (!selectedProject){
  taskFunctions.renderTasks();
 }
 // taskFunctions.renderTasks();
-
-export const projectItemList = document.querySelectorAll (".project-item")
 
 
 export const projectForm = document.getElementById("project-form");
@@ -122,6 +121,9 @@ export let editDueDate = document.querySelector(".edit-task-due-date");
 export let editPriority = document.querySelector(".edit-task-priority");
 export let modalContainer = document.querySelector(".modal")
 
+const saveButton = document.querySelector(".save-task-edits-btn")
+const closeButton = document.querySelector(".close-edit-task-btn")
+
 editButton.addEventListener('click', (e) => {
     modalContainer.style.display = "block";
 
@@ -147,6 +149,23 @@ editButton.addEventListener('click', (e) => {
             editComplete.checked = false;
         }
     }
+
+})
+
+saveButton.addEventListener('click', (e) =>{
+    selectedTask.complete = editComplete.checked;
+    selectedTask.description = editDescription.value;
+    selectedTask.priority = editPriority.value;
+    
+    save()
+    removeAllChildNodes(tasksListDiv);
+    taskFunctions.renderTasks();
+    modalContainer.style.display = "none";
+
+
+})
+closeButton.addEventListener('click', (e) =>{
+    modalContainer.style.display = "none";
 
 })
 

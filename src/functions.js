@@ -1,5 +1,4 @@
-import { newProject, newTaskDescription, projectItemList, modalContainer } from "./index";
-import { format } from 'date-fns';
+import { newProject, newTaskDescription, modalContainer } from "./index";
 
 export class Task{
     constructor(description, dueDate, priority = "Low", complete = false, deleteTask = "Delete"){
