@@ -1,5 +1,5 @@
 import { newProject, newTaskDescription, modalContainer } from "./index";
-
+import { format } from 'date-fns';
 export class Task{
     constructor(description, dueDate, priority = "Low", complete = false, deleteTask = "Delete"){
         this.ID = create_UUID();
@@ -198,6 +198,7 @@ export const taskFunctions = (() => {
             taskDueDate.textContent = eachTask.dueDate;
             taskDueDate.value = eachTask.dueDate;
 
+
             let taskPriority = document.createElement("li");
             task.appendChild(taskPriority);
             taskPriority.classList.add("task-priority");
@@ -348,11 +349,13 @@ export function save() {
     localStorage.setItem(local_storage_selected_key, selectedProjectID);
     localStorage.setItem(local_storage_selected_task_key, selectedTaskID);
 }
+export let newTaskDueDate = format(new Date(), 'MM-dd-yyyy')
 
 export function addTasktoProject() {
     removeAllChildNodes(tasksListDiv);
     //create new task
-    let newTaskItem = new Task(newTaskDescription.value, newTaskDueDate.value);
+
+    let newTaskItem = new Task(newTaskDescription.value, newTaskDueDate);
     
     selectedProject.tasks.push(newTaskItem);
     save();

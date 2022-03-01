@@ -2,6 +2,7 @@
 import { 
     selectProjectId,
     selectedTaskID,
+    newTaskDueDate,
     taskContainer,
     selectedTask,
     taskDueDate,
@@ -34,9 +35,9 @@ import { format } from 'date-fns';
 export const newProject = document.getElementById('form-input');
 export const newTaskTitle = document.getElementById('task-form-title-input');
 export const newTaskDescription = document.getElementById('task-form-description-input');
-export const newTaskDueDate = document.getElementById('task-form-dueDate-input');
-export const newTaskPriority = document.getElementById('task-form-priority-input');
-export const newTaskNotes = document.getElementById('task-form-notes-input');
+// export const newTaskDueDate = document.getElementById('task-form-dueDate-input');
+// export const newTaskPriority = document.getElementById('task-form-priority-input');
+// export const newTaskNotes = document.getElementById('task-form-notes-input');
 export const newTaskComplete = document.getElementById('task-form-complete-input');
 
 
@@ -136,9 +137,12 @@ editButton.addEventListener('click', (e) => {
 
     if (selectedTask.ID === selectedTaskID){
         editDescription.value = selectedTask.description;
+        // selectedTask.dueDate = format(Date.parse(selectedTask.dueDate), 'MM-dd-yyyy');
         
-        
-        editDueDate.value = format(Date.parse(selectedTask.dueDate), 'MM-dd-yyyy');
+        console.log(selectedTask.dueDate);
+
+        // selectedTask.dueDate = format(Date.parse(selectedTask.dueDate), 'yyyy-MM-dd')
+        editDueDate.value = format(Date.parse(selectedTask.dueDate), 'yyyy-MM-dd');
         console.log(selectedTask.dueDate);
         console.log(editDueDate.value);
         editPriority.value = selectedTask.priority
@@ -156,7 +160,19 @@ saveButton.addEventListener('click', (e) =>{
     selectedTask.complete = editComplete.checked;
     selectedTask.description = editDescription.value;
     selectedTask.priority = editPriority.value;
-    
+
+    Date.prototype.addDays = function (days) {
+        const date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+    };
+    // Add a day
+    const date = new Date(editDueDate.value);
+    date.addDays(1);
+
+    selectedTask.dueDate = format(Date.parse(date.addDays(1)), 'MM-dd-yyyy');
+
+
     save()
     removeAllChildNodes(tasksListDiv);
     taskFunctions.renderTasks();
