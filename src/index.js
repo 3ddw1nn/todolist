@@ -2,7 +2,9 @@
 import { 
     selectProjectId,
     selectedTaskID,
+    taskContainer,
     selectedTask,
+    taskDueDate,
     selectedTaskDiv,
     selectedProject,
     libraryFunctions,
@@ -25,6 +27,7 @@ import {
 } from './functions';
 
 import './style.css';
+import { format } from 'date-fns';
 
 // Selectors
 export const newProject = document.getElementById('form-input');
@@ -77,6 +80,7 @@ taskForm.addEventListener("submit",e => {
         return project.ID === selectedProjectID
         
     })
+    // newTaskDescription.value="";
     // console.log(selectedProject);
     addTasktoProject();            
     taskFunctions.renderTasks();
@@ -107,7 +111,43 @@ deleteProjectButton.addEventListener ("click", e => {
     };
 });
 
+let editButton = document.createElement("button");
+taskContainer.appendChild(editButton);
+editButton.classList.add("edit-task-button")
+editButton.textContent="Edit";
 
+export let editComplete = document.querySelector(".edit-task-complete");
+export let editDescription = document.querySelector(".edit-task-description");
+export let editDueDate = document.querySelector(".edit-task-due-date");
+export let editPriority = document.querySelector(".edit-task-priority");
+export let modalContainer = document.querySelector(".modal")
 
-// selectTaskId ()
+editButton.addEventListener('click', (e) => {
+    modalContainer.style.display = "block";
+
+    selectedTask = selectedProject.tasks.find(task=>{
+        return task.ID === selectedTaskID;
+    })
+
+    console.log(selectedTask);
+    console.log(selectedProject);
+
+    if (selectedTask.ID === selectedTaskID){
+        editDescription.value = selectedTask.description;
+        
+        
+        editDueDate.value = format(Date.parse(selectedTask.dueDate), 'MM-dd-yyyy');
+        console.log(selectedTask.dueDate);
+        console.log(editDueDate.value);
+        editPriority.value = selectedTask.priority
+
+        if (selectedTask.complete){
+            editComplete.checked = true;
+        }else {
+            editComplete.checked = false;
+        }
+    }
+
+})
+
 

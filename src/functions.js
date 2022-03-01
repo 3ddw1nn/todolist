@@ -1,8 +1,8 @@
-import { newProject, newTaskDescription, projectItemList } from "./index";
+import { newProject, newTaskDescription, projectItemList, modalContainer } from "./index";
 import { format } from 'date-fns';
 
 export class Task{
-    constructor(description, dueDate = format(new Date(), 'MM-dd-yyyy'), priority = "Priority : Low", complete = "Incomplete", deleteTask = "Delete"){
+    constructor(description, dueDate, priority = "Low", complete = false, deleteTask = "Delete"){
         this.ID = create_UUID();
         this.description = description;
         this.dueDate = dueDate;
@@ -17,10 +17,8 @@ export class Project {
         this.title = title;
         this.tasks = [];
     } 
-    setComplete() {
-
-    }
 };
+
 
 const defaultProject = new Project("default")
 
@@ -65,7 +63,6 @@ export function selectTaskId () {
                 taskFunctions.renderTasks();
                 
                 selectedTask = selectedProject.tasks.find(task=>{
-                    console.log(selectedTask);
                     return task.ID === selectedTaskID
                 })
 
@@ -110,12 +107,6 @@ export function selectProjectId () {
 export let selectedProjectID = localStorage.getItem(local_storage_selected_key);
 
 export let projectsList= [];
-
-// if (localStorage.getItem(local_storage_selected_task)){
-//     tasksList = JSON.parse(localStorage.getItem(local_storage_selected_task))
-// }else {
-    
-// }
 
 //project list array
 if (localStorage.getItem(local_storage_key)) {
@@ -166,7 +157,7 @@ export const libraryFunctions = (()=>{
 
 export const taskItemList = document.querySelectorAll(".task-item")
 
-const taskContainer= document.querySelector('.task-container');
+export const taskContainer= document.querySelector('.task-container');
 
 export const taskFunctions = (() => {
 
@@ -206,6 +197,7 @@ export const taskFunctions = (() => {
             task.appendChild(taskDueDate);
             taskDueDate.classList.add("task-dueDate");
             taskDueDate.textContent = eachTask.dueDate;
+            taskDueDate.value = eachTask.dueDate;
 
             let taskPriority = document.createElement("li");
             task.appendChild(taskPriority);
@@ -216,63 +208,35 @@ export const taskFunctions = (() => {
             task.appendChild(taskComplete);
             taskComplete.classList.add("task-complete");
             taskComplete.textContent = eachTask.complete;
+            if (eachTask.complete === true){
+                taskComplete.textContent = "Complete";
+            }else {
+                taskComplete.textContent = "Incomplete";
+            }
 
             let taskDeleteButton = document.createElement("button");
             task.appendChild(taskDeleteButton);
             taskDeleteButton.classList.add("task-delete-button");
             taskDeleteButton.textContent = "Delete Task";
 
-            let editButton = document.createElement("button");
-            task.appendChild(editButton);
-            editButton.classList.add("edit-task-button")
-            editButton.textContent="Edit";
+
 
             
 
             // add event listener to clicking of this task item div
             selectTaskId();
 
-            editButton.addEventListener('click',(e)=>{
-                if(task.dataset.taskId ==selectedTaskID){
-
-                    let editTask = document.createElement("form");
-                    taskContainer.appendChild(editTask);
-                    let editDescription = document.createElement("input")
-                    editDescription.type = "text";
-                    editTask.appendChild(editDescription);
-                    let editDueDate = document.createElement("input")
-                    editDueDate.type = "date";
-                    editTask.appendChild(editDueDate);
-                    let editPriority = document.createElement("input")
-                    editPriority.type = "text";
-                    editTask.appendChild(editPriority);
-
-                    let saveEdit = document.crateElement("button")
-                    taskContainer.textContent = "Save";
-                    editTask.appendChild(saveEdit);
-
-
-                    
-                    console.log('its the same')
-                    console.log(eachTask.description)
-
-                    saveEdit.addEventListener("click",e => {
-                        eachTask.description = editDescription.value;
-                        eachTask.dueDate = editDueDate.value;
-                        eachTask.priority = editPriority.value;
-                    })
-                }
-            })
-
 
             let completeButtonList = document.querySelectorAll(".task-complete")
             completeButtonList.forEach(eachComplete=>{
                 eachComplete.addEventListener('click', (e)=>{
-                    if(task.dataset.taskId ==selectedTaskID ){
-                        if(eachTask.complete =="Complete"){
-                            eachTask.complete="Incomplete";
+                    if(task.dataset.taskId ===selectedTaskID ){
+                        if(eachTask.complete === true){
+                            eachTask.complete= false;
+                            eachTask.value = "Incomplete";
+                            save();
                         }else{
-                            eachTask.complete = "Complete";
+                            eachTask.complete = true;
                             save();
                         } 
                     }else{
@@ -286,7 +250,6 @@ export const taskFunctions = (() => {
 
                 }else{
                     taskDeleteButton.style.display = "none";
-                    editButton.style.display ="none";
                 }
                 eachTaskDelete.addEventListener('click', (e)=>{
                     if (eachTask.ID===selectedTaskID){
@@ -390,8 +353,7 @@ export function save() {
 export function addTasktoProject() {
     removeAllChildNodes(tasksListDiv);
     //create new task
-
-    let newTaskItem = new Task(newTaskDescription.value);
+    let newTaskItem = new Task(newTaskDescription.value, newTaskDueDate.value);
     
     selectedProject.tasks.push(newTaskItem);
     save();
