@@ -126,32 +126,31 @@ const saveButton = document.querySelector(".save-task-edits-btn")
 const closeButton = document.querySelector(".close-edit-task-btn")
 
 editButton.addEventListener('click', (e) => {
-    modalContainer.style.display = "block";
-
     selectedTask = selectedProject.tasks.find(task=>{
         return task.ID === selectedTaskID;
     })
-
     console.log(selectedTask);
     console.log(selectedProject);
+    if(!selectedTaskID){
+        alert("Select a Task");
+    }else {
+        modalContainer.style.display = "block";
+        if (selectedTask.ID === selectedTaskID){
+            editDescription.value = selectedTask.description;
+            console.log(selectedTask.dueDate);
 
-    if (selectedTask.ID === selectedTaskID){
-        editDescription.value = selectedTask.description;
-        // selectedTask.dueDate = format(Date.parse(selectedTask.dueDate), 'MM-dd-yyyy');
-        
-        console.log(selectedTask.dueDate);
-
-        // selectedTask.dueDate = format(Date.parse(selectedTask.dueDate), 'yyyy-MM-dd')
-        editDueDate.value = format(Date.parse(selectedTask.dueDate), 'yyyy-MM-dd');
-        console.log(selectedTask.dueDate);
-        console.log(editDueDate.value);
-        editPriority.value = selectedTask.priority
-
-        if (selectedTask.complete){
-            editComplete.checked = true;
-        }else {
-            editComplete.checked = false;
+            editDueDate.value = format(Date.parse(selectedTask.dueDate), 'yyyy-MM-dd');
+            console.log(selectedTask.dueDate);
+            console.log(editDueDate.value);
+            editPriority.value = selectedTask.priority
+    
+            if (selectedTask.complete){
+                editComplete.checked = true;
+            }else {
+                editComplete.checked = false;
+            }
         }
+
     }
 
 })
